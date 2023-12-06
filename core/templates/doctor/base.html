@@ -15,7 +15,7 @@
 <!-- headers-->
 <nav class="navbar navbar-expand navbar-dark bg-dark fixed-top">
 
-    <a class="navbar-brand mr-1 text-primary" href="">Medcare Smart Doctor</a>
+    <a class="navbar-brand mr-1 text-primary" href="">Motech Smart Doctor</a>
     <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
     </button>
@@ -55,9 +55,9 @@
 <ul class="sidebar navbar-nav">
 
     <li class="nav-item active">
-        <a class="nav-link" href="{% url 'patient' %}">
+        <a class="nav-link" href="{% url 'doctor' %}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Patient Dashboard</span>
+            <span>Doctor Dashboard</span>
         </a>
     </li>
     <li class="nav-item active">
@@ -66,37 +66,19 @@
             <span>Logged As {{ user.username }}</span>
         </a>
     </li>
-
-    {% if status == '1' %}
-     <li class="nav-item">
-        <a class="nav-link" href="{% url 'diagnosis' %}">
-            <i class="fas fa-microscope text-primary"></i>
-            <span style="color: white">Make Diagnosis</span>
+    <li class="nav-item">
+        <a class="nav-link" href="">
+            <i class="fas fa-medkit text-primary"></i>
+            <span style="color: white">Drug Recommendation</span>
         </a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'result' %}">
-            <i class="fas fa-pager text-primary"></i>
-            <span style="color: white">Diagnosis Results</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'ment_list' %}">
+        <a class="nav-link" href="">
             <i class="fas fa-calendar text-primary"></i>
             <span style="color: white">Appointment</span>
         </a>
     </li>
-    {% else %}
-
-     <li class="nav-item">
-        <a class="nav-link" href="{% url 'create_profile' %}">
-            <i class="fas fa-user text-primary"></i>
-            <span style="color: white">User Profile</span>
-        </a>
-    </li>
-    {% endif %}
 </ul>    
 
 
@@ -142,7 +124,7 @@
 <script src="{% static 'core/js/bootstrap.js' %}"></script> 
 
 
-{% include 'patient/ajax.html' %}
+{% include 'doctor/ajax.html' %}
 
 
 {% block javascript %}{% endblock %}

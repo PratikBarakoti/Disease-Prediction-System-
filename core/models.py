@@ -48,7 +48,7 @@ class Profile(models.Model):
     birth_date = models.DateField(default='None')
     region = models.CharField(max_length=255, default='')
     gender = models.CharField(max_length=255)
-    country = models.CharField(max_length=255, default='Tanzania')
+    country = models.CharField(max_length=255, default='Nepal')
 
     def __str__(self):
         return self.country

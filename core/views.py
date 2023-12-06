@@ -58,6 +58,18 @@ def loginView(request):
 		return render(request, 'login.html')
 
 
+def doctor_home(request):
+	doctor = User.objects.filter(is_doctor=True).count()
+	patient = User.objects.filter(is_patient=True).count()
+	appointment = Ment.objects.filter(approved=True).count()
+	medical1 = Medical.objects.filter(medicine='See Doctor').count()
+	medical2 = Medical.objects.all().count()
+	medical3 = int(medical2)- int(medical1)
+
+	context = {'doctor':doctor, 'ment':appointment, patient:'patient', 'drug':medical3 }
+	return render(request, 'doctor/home.html', context)
+
+
 def patient_home(request):
 	doctor = User.objects.filter(is_doctor=True).count()
 	patient = User.objects.filter(is_patient=True).count()
