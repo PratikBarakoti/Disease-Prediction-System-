@@ -11,6 +11,18 @@ from django.contrib import messages
 import joblib as joblib
 from django.contrib.auth.hashers import make_password
 
+
+
+def about(request):
+	return render(request, 'about.html')
+
+
+
+def doctor_list(request):
+	return render(request, 'doctors.html')
+
+
+
 def home(request):
 	return render(request, 'home.html')
 
@@ -200,6 +212,137 @@ def logoutView(request):
 	return redirect('login')
 
 	
+
+def doctor_commend(request):
+	user_id = request.user.id
+	disease = Medical.objects.all()
+	context = {'disease':disease}
+	return render(request, 'doctor/result.html', context)
+
+
+
+@login_required
+@csrf_exempt
+def MakeMend(request):
+  disease = request.POST.get('disease')
+  userid = request.POST.get('userid')
+
+  print('Disease ID',disease)
+  print('User ID is',userid)
+
+
+  patient_id = Medical.objects.filter(pk=disease).values_list('patient_id', flat=True)
+  patient_id = list(patient_id)
+  patient_id = patient_id[0]
+  disease_id = disease
+
+
+  dob = Profile.objects.filter(user_id=patient_id).values_list('birth_date', flat=True)
+  dob = list(dob)
+  dob = dob[0]
+  print('Date of birth is',dob)
+  dob = str(dob)
+  dob = dob[0:4]
+  print('New Date of birth is',dob)
+  dob = int(dob)
+  age = 2021 - dob
+  print('Patient Age is',age)
+  
+
+  gender = Profile.objects.filter(user_id=patient_id).values_list('gender', flat=True)
+  gender = list(gender)
+  gender = gender[0]
+  print('Patient Gender is',gender)
+
+  if gender == 'Male':
+      sex = 1
+  else:
+      sex = 0
+  
+  print('Patient Sex is',sex)
+  
+  sick = Medical.objects.filter(pk=disease).values_list('disease', flat=True)
+  sick = list(sick)
+  sick = sick[0]
+  sick = str(sick)
+
+  print('Patient Disease Diagnosed is',sick)
+  
+  disease_list = ['Acne','Allergy','Diabetes','Fungal infection','Urinary tract infection','Malaria','Malaria','Migraine','Hepatitis B','AIDS']
+  
+  disease_dict = {'Acne':0,'Allergy':1,'Diabetes':2,'Fungal infection':3,'Urinary tract infection':4,'Malaria':5,'Malaria':6,'Migraine':7,'Hepatitis B':8, 'AIDS':9}
+
+  if sick in disease_list:
+      print('AI Got Drug For This Disease')
+      print(disease_dict.get(sick))
+      new_sick = disease_dict.get(sick)
+
+      test = [new_sick,sex,age]
+      print(test)
+      test = np.array(test)
+      print(test.shape)
+      test = np.array(test).reshape(1,-1)
+      print(test.shape)
+      
+      clf = joblib.load('model/medical_rf.pkl')
+      prediction = clf.predict(test)
+      prediction = prediction[0]
+      print('Predicted Disease Is',prediction)
+
+      try:
+          check_medical = Medical.objects.filter(patient_id=disease).exists()
+          if(check_medical == False):
+              Medical.objects.filter(pk= disease).update(medicine=prediction)
+              return JsonResponse({'status':'recommended'})
+          else:
+              print('Drug Exist')
+          return JsonResponse({'status':'exist'}) 
+      except Exception as e:
+          print(e)    
+  else:
+      print('AI Can Not Recommend Drug')
+      Medical.objects.filter(pk= disease).update(medicine='See Doctor')
+      return JsonResponse({'status':'not is store'})
+
+
+
+
+
+
+@login_required
+def doctor_ment(request):
+    user_id = request.user.id
+    appointment = Ment.objects.all()
+    context = {'ment':appointment, 'status':'1'}
+    return render(request, 'doctor/ment.html', context)
+
+
+
+@login_required
+@csrf_exempt
+def SaveMent(request):
+  pk = request.POST.get('pk')
+  day = request.POST.get('day')
+  time = request.POST.get('time')
+
+
+  disease = Ment.objects.filter(pk=pk).exists()
+  print(disease)
+  user_id = request.user.id
+
+
+  
+  try:
+      check_ment = Ment.objects.filter(pk=pk).exists()
+      if(check_ment == True):
+          Ment.objects.filter(id=pk).update(approved=True,ment_day=day,time=time,doctor_id=user_id)
+          return JsonResponse({'status':'Appointment Set'})
+      else:
+          print('Appointment Not Exist')
+          return JsonResponse({'status':'not exist'}) 
+  except Exception as e:
+          print(e)
+          return JsonResponse({'status':'error'}) 
 	 	
     	
 

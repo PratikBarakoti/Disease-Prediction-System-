@@ -15,7 +15,7 @@ $(document).ready(function(){
 
 	mydata = {disease:disease, userid:userid};
 		$.ajax({
-			url: "",
+			url: "{% url 'mend' %}",
 			method: "POST",
 			data:mydata,
 
@@ -60,7 +60,7 @@ $(document).ready(function(){
 
 	    mydata = {pk:pk, day:day, time:time};
 		$.ajax({
-			url: "",
+			url: "{% url 'savement' %}",
 			method: "POST",
 			data:mydata,
 
